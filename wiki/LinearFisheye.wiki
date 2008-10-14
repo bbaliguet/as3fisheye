@@ -1,10 +1,10 @@
-#summary About as3fisheye
+#summary About the linear fisheye.
 
 = Introduction =
 
 The linear fisheye provides a fisheye projection based on Bederson's linear Degree of Interest function (Bederson, 2000). The Degree of Interest, DOI, is a function that describes the importance of an element compared to a "focussed" element. According to this function, the position of the elements around the focus element are determined.
 
-This implementation allows a repartition of the entry values on the output range. An example can be found here: TO COMPLETE.
+This implementation allows a repartition of the entry values on the output range. An example can be found here: [http://2ndfondation.nuxit.net/projects/as3fisheye/FisheyeProject.html example].
 
 = Public Methods =
 
