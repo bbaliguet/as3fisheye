@@ -6,20 +6,22 @@ The linear fisheye provides a fisheye projection based on Bederson's linear Degr
 
 This implementation allows a repartition of the entry values on the output range. An example can be found here: TO COMPLETE.
 
-=== public function `LinearFisheye`(min:Number, max:Number, outMin:Number, outMax:Number):void ===
+= Public Methods =
+
+` LinearFisheye(min:Number, max:Number, outMin:Number, outMax:Number):void `
 
  * _min, max:_ the range for the input values.
  * _outMin, outMax:_ the range for the output values. Typically, the position of a "fisheyed" element in a list.
 
 
-=== public function setFocus(focus:Number, focusDist:Number, distortPercent:Number, focusAreaPercent:Number):void ===
+` setFocus(focus:Number, focusDist:Number, distortPercent:Number, focusAreaPercent:Number):void `
 
  * _focus:_ the focussed value.
  * _focusDist:_ the distortion of the focus area.
  * _distortPercent:_ the percentage of the total range that will be distorted.
  * _focusAreaPercent:_ the percentage of the total range that will be the focussed area.
 
-=== public function getValue(value:Number):Number ===
+` getValue(value:Number):Number `
 
  * _value:_ the projected value.
 
