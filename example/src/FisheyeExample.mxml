@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="init()">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Label;
+			import mx.core.UIComponent;
+			import mx.containers.Canvas;
+			import fr.kfeyn.LinearFisheye;
+			
+			public var fisheyeHeight:LinearFisheye;
+			public var fisheyeDynamik:LinearFisheye;
+			
+			public function init():void {
+				fisheyeHeight = new LinearFisheye(0, 200, 0, displayGround.height-120);
+				fisheyeDynamik = new LinearFisheye(20,380, 20, 380); 
+				focus.value = 100;
+				aoe.value = 30;
+				aof.value = 10;
+				dist.value = 4;
+				refresh();
+				
+				for (var i:int = 15; i< 380; i = i+20) {
+					var canvas:Canvas = new Canvas();
+					dynamicContainer.addChild(canvas);
+					canvas.y = 20;
+					canvas.x = i;
+					canvas.width = 10;
+					canvas.height = 10;
+					canvas.setStyle("borderStyle", "solid");
+				}
+			}
+			
+			public function refresh():void {
+				displayGround.removeAllChildren();
+				fisheyeHeight.setFocus(focus.value, dist.value, aoe.value, aof.value);
+				
+				for(var i:int=1; i<200; i++) {
+					
+					// display value
+					var dot:Canvas = new Canvas();
+					displayGround.addChild(dot);
+															
+					if (i==focus.value) {
+						dot.setStyle("backgroundColor", "#FFAA66");
+						dot.height = 4;
+						dot.width = 4;
+					} else { 
+						dot.setStyle("backgroundColor", "#FFFFFF");
+						dot.height = 2;
+						dot.width = 2;
+					}
+					
+					dot.x = displayGround.width * i / 200 - dot.width/2;
+					dot.y = displayGround.height - fisheyeHeight.getValue(i) - 90 - dot.height/2;
+					
+					dot.toolTip = "Projected value for entry value "+i;
+					
+					if (i==focus.value) {
+						var lb:Label = new Label();
+						lb.text = "fisheyed position";
+						displayGround.addChild(lb);
+						lb.setStyle("color", "#FFFFFF");
+						if (i<100) {
+							lb.x = dot.x + 5;
+							lb.y = dot.y + 5; 
+						} else {
+							lb.x = dot.x - 100;
+							lb.y = dot.y - 15;
+						}
+						lb.alpha = 0.5;
+					}
+					
+					// display DOI
+					var dot2:Canvas = new Canvas();
+					displayGround.addChild(dot2);
+					
+					if (i==focus.value) {
+						dot2.setStyle("backgroundColor", "#FFAA66");
+						dot2.height = 4;
+						dot2.width = 4;
+					} else { 
+						dot2.setStyle("backgroundColor", "#AAAAAA");
+						dot2.height = 2;
+						dot2.width = 2;
+					}
+					
+					dot2.x = displayGround.width * i / 200 - dot2.width/2;
+					dot2.y = displayGround.height - 90 - fisheyeHeight.getDOI(i)*10 - dot2.height/2;
+
+					dot2.toolTip = "Real DOI value for entry value "+i;
+					
+					if (i==focus.value) {
+						var lb2:Label = new Label();
+						lb2.text = "Degree Of Interest";
+						displayGround.addChild(lb2);
+						lb2.setStyle("color", "#FFFFFF");
+						if (i<100) {
+							lb2.x = dot2.x + 5;
+							lb2.y = dot2.y - 15; 
+						} else {
+							lb2.x = dot2.x - 110;
+							lb2.y = dot2.y - 15;
+						}
+						lb2.alpha = 0.5;
+					}	
+				}
+			}
+			
+			public function refreshDynamik(event:MouseEvent):void {
+				fisheyeDynamik.setFocus(event.localX, dist.value, aoe.value, aof.value);
+				var childs:Array = dynamicContainer.getChildren();
+				for (var i:int=0; i<childs.length; i++) {
+					if (childs[i] is Canvas) {
+						var canvasChild:Canvas = childs[i] as Canvas;
+						var nx:Number =  fisheyeDynamik.getValue(i*20 + 20);
+						canvasChild.height = (dist.value>0)? 10 + (fisheyeDynamik.getRealDOI(i*20 + 20)-1)/dist.value * 20 : 10;
+						canvasChild.width = canvasChild.height;
+						canvasChild.x = nx - canvasChild.width/2;
+						canvasChild.y = 25-canvasChild.height/2;
+					}
+				}
+			}
+
+		]]>
+	</mx:Script>
+	<mx:Canvas left="0" right="0" top="0" bottom="0" id="displayGround"/>
+	<mx:Grid x="10" y="40">
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%" horizontalAlign="right">
+				<mx:Label text="focus:"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:HSlider enabled="true" change="refresh()" id="focus" minimum="0" maximum="200" snapInterval="1"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="% area of effect:"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:HSlider enabled="true" change="refresh()" id="aoe" minimum="0" maximum="100" snapInterval="1"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="% area of focus:"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:HSlider enabled="true" change="refresh()" id="aof" minimum="0" maximum="100" snapInterval="1"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%" horizontalAlign="right">
+				<mx:Label text="distortion:"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:HSlider enabled="true" change="refresh()" id="dist" minimum="0" maximum="20" snapInterval="1"/>
+			</mx:GridItem>
+		</mx:GridRow>
+	</mx:Grid>
+	
+	
+	<mx:HRule top="30" left="0" right="0"/>
+	<mx:HRule left="0" right="0" bottom="90" height="2"/>
+	
+	<mx:Label text="Dynamic fisheye" fontWeight="bold" right="10" bottom="10" color="#FFFFFF"/>
+	<mx:Label text="prizzZDesign - 2008" right="10" top="15" color="#FFFFFF"/>
+	<mx:Canvas bottom="30" height="50" width="400" id="dynamicContainer" mouseMove="refreshDynamik(event)" right="10" borderStyle="solid">
+	</mx:Canvas>
+	<mx:Canvas bottom="30" height="50" width="400" mouseMove="refreshDynamik(event)" right="10"/>
+</mx:Application>
